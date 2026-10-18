@@ -2,7 +2,6 @@ package com.example.finance.tracker.finance_tracker.controller;
 
 import com.example.finance.tracker.finance_tracker.Type.Category;
 import com.example.finance.tracker.finance_tracker.dto.CreateTransactionRequest;
-import com.example.finance.tracker.finance_tracker.dto.RegisterRequest;
 import com.example.finance.tracker.finance_tracker.dto.UpdateTransactionRequest;
 import com.example.finance.tracker.finance_tracker.model.Transaction;
 import com.example.finance.tracker.finance_tracker.service.TransactionService;

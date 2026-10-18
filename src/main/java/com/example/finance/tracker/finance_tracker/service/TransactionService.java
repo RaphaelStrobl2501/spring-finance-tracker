@@ -25,16 +25,12 @@ import java.util.Optional;
 
 @Service
 public class TransactionService {
-    private final TransactionRepository transactionRepository;
     private final JpaTransactionRepository jpaTransactionRepository;
-    private final UserRepository userRepository;
     private final JpaUserRepository jpaUserRepository;
     private final JpaCategoryRepository jpaCategoryRepository;
 
-    public TransactionService(JpaTransactionRepository jpaTransactionRepository, UserRepository userRepository, TransactionRepository transactionRepository, JpaUserRepository jpaUserRepository, JpaCategoryRepository jpaCategoryRepository) {
+    public TransactionService(JpaTransactionRepository jpaTransactionRepository, JpaUserRepository jpaUserRepository, JpaCategoryRepository jpaCategoryRepository) {
         this.jpaTransactionRepository = jpaTransactionRepository;
-        this.userRepository = userRepository;
-        this.transactionRepository = transactionRepository;
         this.jpaUserRepository = jpaUserRepository;
         this.jpaCategoryRepository = jpaCategoryRepository;
     }

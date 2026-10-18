@@ -1,9 +1,7 @@
 package com.example.finance.tracker.finance_tracker.service;
 
 import com.example.finance.tracker.finance_tracker.entity.UserEntity;
-import com.example.finance.tracker.finance_tracker.model.AppUser;
 import com.example.finance.tracker.finance_tracker.repository.JpaUserRepository;
-import com.example.finance.tracker.finance_tracker.repository.UserRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
