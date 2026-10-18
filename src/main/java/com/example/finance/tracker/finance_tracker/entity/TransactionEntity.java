@@ -15,7 +15,7 @@ public class TransactionEntity {
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false) // name means column in transaction table where user id is stored and referencedColumnName means the name of the column of the primary key in the users table
     private UserEntity user;
 
     @ManyToOne(fetch = FetchType.LAZY)
