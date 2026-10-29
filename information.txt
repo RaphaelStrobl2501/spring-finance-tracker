@@ -1,0 +1,1 @@
+rebuild the jpa repositorys, no need to write boilerplate controller service again, also add spring security again

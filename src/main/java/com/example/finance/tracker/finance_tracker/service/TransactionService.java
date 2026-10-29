@@ -25,21 +25,21 @@ import java.util.Optional;
 
 @Service
 public class TransactionService {
-    private final JpaTransactionRepository jpaTransactionRepository;
-    private final JpaUserRepository jpaUserRepository;
-    private final JpaCategoryRepository jpaCategoryRepository;
+    private final TransactionRepository transactionRepository;
+    private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
 
-    public TransactionService(JpaTransactionRepository jpaTransactionRepository, JpaUserRepository jpaUserRepository, JpaCategoryRepository jpaCategoryRepository) {
-        this.jpaTransactionRepository = jpaTransactionRepository;
-        this.jpaUserRepository = jpaUserRepository;
-        this.jpaCategoryRepository = jpaCategoryRepository;
+    public TransactionService(TransactionRepository transactionRepository, UserRepository userRepository, CategoryRepository categoryRepository) {
+        this.transactionRepository = transactionRepository;
+        this.userRepository = userRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     public Transaction createTransaction(CreateTransactionRequest createTransactionRequest, String username) {
-        UserEntity user = jpaUserRepository.findByUsername(username)
+        UserEntity user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        CategoryEntity category = jpaCategoryRepository
+        CategoryEntity category = categoryRepository
                 .findByName(createTransactionRequest.category().name())
                 .orElseThrow(() -> new IllegalArgumentException("Category not found"));
 
@@ -51,7 +51,7 @@ public class TransactionService {
                 category
         );
 
-        TransactionEntity saved = jpaTransactionRepository.save(entity);
+        TransactionEntity saved = transactionRepository.save(entity);
 
         return toTransaction(saved);
     }
@@ -66,12 +66,12 @@ public class TransactionService {
     }
 
     public List<Transaction> getAllTransactions(Category category, LocalDate startDate, LocalDate endDate, String name) {
-        UserEntity user = jpaUserRepository.findByUsername(name)
+        UserEntity user = userRepository.findByUsername(name)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("Start date can not be after end date");
         }
-        List<TransactionEntity> entities = jpaTransactionRepository.findFiltered(
+        List<TransactionEntity> entities = transactionRepository.findFiltered(
                 user.getId(),
                 category == null ? null : category.name(),
                 startDate,
@@ -84,7 +84,7 @@ public class TransactionService {
     }
 
     public Transaction getTransaction(int id, String username) {
-        Optional<TransactionEntity> transactionEntity = jpaTransactionRepository.findByIdAndUser_Username(id, username);
+        Optional<TransactionEntity> transactionEntity = transactionRepository.findByIdAndUser_Username(id, username);
         if (transactionEntity.isEmpty()) {
             throw new NoSuchElementException("No transaction with provided ID found");
         }
@@ -93,7 +93,7 @@ public class TransactionService {
 
     @Transactional
     public Transaction updateTransaction(int id, UpdateTransactionRequest request, String username) {
-        TransactionEntity entity = jpaTransactionRepository
+        TransactionEntity entity = transactionRepository
                 .findByIdAndUser_Username(id, username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
@@ -110,7 +110,7 @@ public class TransactionService {
         }
 
         if (request.category() != null) {
-            CategoryEntity category = jpaCategoryRepository
+            CategoryEntity category = categoryRepository
                     .findByName(request.category().name())
                     .orElseThrow(() -> new IllegalArgumentException("Category not found"));
 
@@ -122,10 +122,10 @@ public class TransactionService {
 
     @Transactional
     public void deleteTransaction(int id, String username) {
-        TransactionEntity entity = jpaTransactionRepository
+        TransactionEntity entity = transactionRepository
                 .findByIdAndUser_Username(id, username)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        jpaTransactionRepository.delete(entity);
+        transactionRepository.delete(entity);
     }
 }

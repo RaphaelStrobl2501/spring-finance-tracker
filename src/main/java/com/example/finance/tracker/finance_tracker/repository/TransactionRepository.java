@@ -4,13 +4,15 @@ import com.example.finance.tracker.finance_tracker.entity.TransactionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public interface JpaTransactionRepository extends JpaRepository<TransactionEntity, Integer> {
-    List<TransactionEntity> findByUserId(Integer userId);
+@Repository
+public interface TransactionRepository extends JpaRepository<TransactionEntity, Integer> {
+    Optional<TransactionEntity> findByIdAndUser_Username(int id, String username);
 
     @Query("""
     SELECT t FROM TransactionEntity t
@@ -25,7 +27,4 @@ public interface JpaTransactionRepository extends JpaRepository<TransactionEntit
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
-
-    Optional<TransactionEntity> findByIdAndUser_Username(Integer id, String username);
-
 }
