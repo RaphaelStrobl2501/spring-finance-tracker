@@ -21,4 +21,5 @@ public class AuthController {
     public void registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
         userService.registerUser(registerRequest);
     }
+
 }

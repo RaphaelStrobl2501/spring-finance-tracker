@@ -18,17 +18,32 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.GET, "/status").permitAll()
-                .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                .anyRequest().authenticated());
 
-        http.httpBasic(Customizer.withDefaults());
-        http.formLogin(form -> form.defaultSuccessUrl("/whoami", true));
+        return http
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .formLogin(form -> form.disable())
+                .httpBasic(Customizer.withDefaults())
+                .build();
 
-        http.csrf(csrf -> csrf.disable());
 
-        return http.build();
+        // return http.authorizeHttpRequests(auth -> auth
+         //       .requestMatchers(HttpMethod.GET, "/status").permitAll()
+         //       .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+        //        .anyRequest().authenticated())
+        //        .formLogin(Customizer.withDefaults())
+        //        .logout(Customizer.withDefaults())
+        //        .build();
+
+
+        // http.formLogin(form -> form.defaultSuccessUrl("/whoami", true));
+
+        // http.csrf(csrf -> csrf.disable());
+
+        // return http.build();
     }
 
     @Bean
@@ -36,7 +51,5 @@ public class SecurityConfig {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder;
     }
-
-
 
 }
