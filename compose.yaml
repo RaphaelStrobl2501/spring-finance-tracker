@@ -7,5 +7,21 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Password is required}
     volumes:
       - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U raphi -d finance_tracker"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  backend:
+    build: .
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/finance_tracker
+      SPRING_DATASOURCE_USERNAME: raphi
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy
 volumes:
   postgres_data:
