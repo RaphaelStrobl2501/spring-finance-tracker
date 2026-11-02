@@ -48,7 +48,7 @@ public class TransactionService {
 
     @CacheEvict(
             value = "monthlyAnalytics",
-            key = "#username + ':' + #request.date.year + ':' + #request.date.month"
+            allEntries = true
     )
     public Transaction createTransaction(CreateTransactionRequest createTransactionRequest, String username) {
         UserEntity user = userRepository.findByUsername(username)
@@ -74,7 +74,7 @@ public class TransactionService {
 
     @CacheEvict(
             value = "monthlyAnalytics",
-            key = "#username + ':' + #request.date.year + ':' + #request.date.month"
+            allEntries = true
     )
     @Transactional
     public void importTransactions(MultipartFile file, String username) {
@@ -243,7 +243,7 @@ public class TransactionService {
 
     @CacheEvict(
             value = "monthlyAnalytics",
-            key = "#username + ':' + #request.date.year + ':' + #request.date.month"
+            allEntries = true
     )
     @Transactional
     public Transaction updateTransaction(int id, UpdateTransactionRequest request, String username) {
@@ -276,7 +276,7 @@ public class TransactionService {
 
     @CacheEvict(
             value = "monthlyAnalytics",
-            key = "#username + ':' + #request.date.year + ':' + #request.date.month"
+            allEntries = true
     )
     @Transactional
     public void deleteTransaction(int id, String username) {

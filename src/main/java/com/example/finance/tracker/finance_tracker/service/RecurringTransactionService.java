@@ -44,7 +44,7 @@ public class RecurringTransactionService {
 
     @CacheEvict(
             value = "monthlyAnalytics",
-            key = "#username + ':' + #request.date.year + ':' + #request.date.month"
+            allEntries = true
     )
     @Transactional
     public void processDueTransactions() {
