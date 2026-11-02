@@ -12,6 +12,7 @@ import com.example.finance.tracker.finance_tracker.repository.RecurringTransacti
 import com.example.finance.tracker.finance_tracker.repository.TransactionRepository;
 
 import com.example.finance.tracker.finance_tracker.repository.UserRepository;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +42,10 @@ public class RecurringTransactionService {
         this.categoryRepository = categoryRepository;
     }
 
+    @CacheEvict(
+            value = "monthlyAnalytics",
+            key = "#username + ':' + #request.date.year + ':' + #request.date.month"
+    )
     @Transactional
     public void processDueTransactions() {
 
@@ -92,6 +97,10 @@ public class RecurringTransactionService {
     }
 
 
+    @CacheEvict(
+            value = "monthlyAnalytics",
+            key = "#username + ':' + #request.date.year + ':' + #request.date.month"
+    )
     @Transactional
     public RecurringTransactionResponse create(
             CreateRecurringTransactionRequest request,

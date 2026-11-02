@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,10 @@ public class TransactionService {
         this.categoryRepository = categoryRepository;
     }
 
+    @CacheEvict(
+            value = "monthlyAnalytics",
+            key = "#username + ':' + #request.date.year + ':' + #request.date.month"
+    )
     public Transaction createTransaction(CreateTransactionRequest createTransactionRequest, String username) {
         UserEntity user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -67,7 +72,10 @@ public class TransactionService {
         return toTransaction(saved);
     }
 
-
+    @CacheEvict(
+            value = "monthlyAnalytics",
+            key = "#username + ':' + #request.date.year + ':' + #request.date.month"
+    )
     @Transactional
     public void importTransactions(MultipartFile file, String username) {
 
@@ -233,6 +241,10 @@ public class TransactionService {
         return "\"" + value.replace("\"", "\"\"") + "\"";
     }
 
+    @CacheEvict(
+            value = "monthlyAnalytics",
+            key = "#username + ':' + #request.date.year + ':' + #request.date.month"
+    )
     @Transactional
     public Transaction updateTransaction(int id, UpdateTransactionRequest request, String username) {
         TransactionEntity entity = transactionRepository
@@ -262,6 +274,10 @@ public class TransactionService {
         return toTransaction(entity);
     }
 
+    @CacheEvict(
+            value = "monthlyAnalytics",
+            key = "#username + ':' + #request.date.year + ':' + #request.date.month"
+    )
     @Transactional
     public void deleteTransaction(int id, String username) {
         TransactionEntity entity = transactionRepository
