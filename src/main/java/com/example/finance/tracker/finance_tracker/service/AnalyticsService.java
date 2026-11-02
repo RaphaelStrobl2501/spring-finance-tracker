@@ -6,6 +6,7 @@ import com.example.finance.tracker.finance_tracker.dto.response.MonthlyAnalytics
 import com.example.finance.tracker.finance_tracker.entity.UserEntity;
 import com.example.finance.tracker.finance_tracker.repository.TransactionRepository;
 import com.example.finance.tracker.finance_tracker.repository.UserRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,10 @@ public class AnalyticsService {
         this.userRepository = userRepository;
     }
 
+    @Cacheable(
+            value = "monthlyAnalytics",
+            key = "#username + ':' + #year + ':' + #month"
+    )
     @Transactional(readOnly = true)
     public MonthlyAnalyticsResponse getMonthlyAnalytics(
             Integer year,
