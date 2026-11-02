@@ -1,5 +1,6 @@
 package com.example.finance.tracker.finance_tracker.entity;
 
+import com.example.finance.tracker.finance_tracker.Type.TransactionType;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -27,17 +28,23 @@ public class TransactionEntity {
 
     private BigDecimal amount;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    private TransactionType transactionType;
+
     protected TransactionEntity() {
     }
 
     public TransactionEntity(String description, BigDecimal amount,
                              LocalDate date, UserEntity user,
-                             CategoryEntity categoryEntity) {
+                             CategoryEntity categoryEntity,
+                             TransactionType transactionType) {
         this.description = description;
         this.amount = amount;
         this.date = date;
         this.user = user;
         this.categoryEntity = categoryEntity;
+        this.transactionType = transactionType;
     }
 
     public String getDescription() {
@@ -58,6 +65,10 @@ public class TransactionEntity {
 
     public CategoryEntity getCategoryEntity() {
         return categoryEntity;
+    }
+
+    public TransactionType getTransactionType() {
+        return transactionType;
     }
 
     public void setDescription(String description) {

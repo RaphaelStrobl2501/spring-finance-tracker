@@ -7,9 +7,15 @@ import com.example.finance.tracker.finance_tracker.model.Transaction;
 import com.example.finance.tracker.finance_tracker.service.TransactionService;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
@@ -33,6 +39,12 @@ public class TransactionController {
         return transactionService.createTransaction(createTransactionRequest, username);
     }
 
+    // csv upload
+    @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void importTransactions(@RequestParam("file") MultipartFile file, Principal principal) throws IOException {
+        transactionService.importTransactions(file, principal.getName());
+    }
+
     @GetMapping()
     public List<Transaction> getAllTransactions(@RequestParam(required = false) Category category,
                                                 @RequestParam(required = false)
@@ -50,6 +62,20 @@ public class TransactionController {
     public Transaction getTransaction(@PathVariable int id, Principal principal) {
         String name = principal.getName();
         return transactionService.getTransaction(id, name);
+    }
+
+    @GetMapping(value = "/export", produces = "text/csv")
+    public ResponseEntity<String> exportTransactions(Principal principal) {
+
+        String csv = transactionService.exportTransactions(principal.getName());
+
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"transactions.csv\""
+                )
+                .contentType(new MediaType("text", "csv", StandardCharsets.UTF_8))
+                .body(csv);
     }
 
     @PatchMapping("/{id}")

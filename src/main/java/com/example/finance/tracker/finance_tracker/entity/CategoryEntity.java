@@ -21,4 +21,6 @@ public class CategoryEntity {
     public String getName() {
         return name;
     }
+
+    public Integer getId() { return id; }
 }
