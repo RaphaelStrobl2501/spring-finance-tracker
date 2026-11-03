@@ -21,3 +21,6 @@ jobs:
 
       - name: Run tests
         run: ./mvnw verify
+
+      - name: Build Docker image
+        run: docker build -t finance_tracker:ci .
