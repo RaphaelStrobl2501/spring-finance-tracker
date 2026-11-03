@@ -6,6 +6,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -22,4 +24,10 @@ public class AuthController {
         userService.registerUser(registerRequest);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Map<String, String> handleDuplicateRegistration(
+            IllegalArgumentException exception) {
+        return Map.of("error", exception.getMessage());
+    }
 }

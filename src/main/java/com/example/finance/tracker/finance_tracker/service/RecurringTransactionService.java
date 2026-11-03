@@ -96,11 +96,6 @@ public class RecurringTransactionService {
         };
     }
 
-
-    @CacheEvict(
-            value = "monthlyAnalytics",
-            key = "#username + ':' + #request.date.year + ':' + #request.date.month"
-    )
     @Transactional
     public RecurringTransactionResponse create(
             CreateRecurringTransactionRequest request,
