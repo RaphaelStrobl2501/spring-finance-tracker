@@ -7,6 +7,8 @@ import com.example.finance.tracker.finance_tracker.repository.CategoryRepository
 import com.example.finance.tracker.finance_tracker.repository.TransactionRepository;
 import com.example.finance.tracker.finance_tracker.Type.TransactionType;
 import com.example.finance.tracker.finance_tracker.repository.UserRepository;
+import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,6 +43,43 @@ class TransactionRepositoryIntegrationTest {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private EntityManager entityManager;
+
+    private UserEntity owner;
+    private UserEntity otherUser;
+    private TransactionEntity savedTransaction;
+
+    @BeforeEach
+    void setUp() {
+        owner = userRepository.save(
+                new UserEntity("user", "123")
+        );
+
+        otherUser = userRepository.save(
+                new UserEntity("test", "345")
+        );
+
+        CategoryEntity category = categoryRepository.findByName("FOOD")
+                .orElseGet(() ->
+                        categoryRepository.save(new CategoryEntity("FOOD"))
+                );
+
+        savedTransaction = transactionRepository.save(
+                new TransactionEntity(
+                        "description test",
+                        new BigDecimal("10.00"),
+                        LocalDate.of(2026, 11, 3),
+                        owner,
+                        category,
+                        TransactionType.INCOME
+                )
+        );
+
+        entityManager.flush();
+        entityManager.clear();
+    }
+
     @Test
     void shouldFindTransactionForOwner() {
         UserEntity user = new UserEntity("user", "123");
@@ -63,21 +102,19 @@ class TransactionRepositoryIntegrationTest {
 
     @Test
     void shouldNotFindTransactionForAnotherUser() {
-        UserEntity user = new UserEntity("user", "123");
-        userRepository.save(user);
+        assertThat(
+                transactionRepository.findByIdAndUser_Username(
+                        savedTransaction.getId(),
+                        "user"
+                )
+        ).isPresent();
 
-        UserEntity user2 = new UserEntity("test", "345");
-        userRepository.save(user);
+        Optional<TransactionEntity> result =
+                transactionRepository.findByIdAndUser_Username(
+                        savedTransaction.getId(),
+                        "test"
+                );
 
-        TransactionType type = TransactionType.INCOME;
-        CategoryEntity categoryEntity = new CategoryEntity("FOOD");
-        categoryRepository.save(categoryEntity);
-        TransactionEntity transactionEntity = new TransactionEntity("description test", BigDecimal.valueOf(10), LocalDate.of(2026, 11, 3), user, categoryEntity, type);
-        transactionRepository.save(transactionEntity);
-
-        Optional<TransactionEntity> transaction = transactionRepository.findByIdAndUser_Username(transactionEntity.getId(), "abc");
-
-        assertThat(transaction).isNotPresent();
-
+        assertThat(result).isEmpty();
     }
 }

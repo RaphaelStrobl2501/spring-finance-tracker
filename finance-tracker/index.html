@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Finance Tracker</title><link rel="stylesheet" href="style.css"><script src="app.js" defer></script></head>
+<body><main><header><div><small>YOUR MONEY, AT A GLANCE</small><h1>Finance Tracker</h1></div><button id="logout" hidden>Log out</button></header>
+<details><summary>Connection settings</summary><form id="settings"><label>API base URL<input id="base" type="url" required placeholder="http://localhost:8080"></label><label>Transaction type enum values (comma-separated)<input id="types" required></label><p>Type defaults INCOME and EXPENSE are unverified. Set the exact names from your TransactionType enum. Categories load from /categories.</p><button>Save settings</button></form></details>
+<p id="status" role="status" aria-live="polite">Start your backend, then sign in.</p>
+<section id="auth"><h2>Welcome back</h2><p>Use your backend account. Credentials stay in this tab’s memory.</p><form id="login"><label>Username<input id="username" autocomplete="username" required></label><label>Password<input id="password" type="password" autocomplete="current-password" required></label><div class="actions"><button>Log in</button><button type="button" id="register">Register this account</button></div></form></section>
+<div id="workspace" hidden><section><h2>Add a transaction</h2><form id="create"><label>Description<input name="description" required></label><div class="grid"><label>Amount<input name="amount" type="number" min="0.00000001" step="any" required></label><label>Date<input name="date" type="date" required></label><label>Category<select name="category" id="category" required></select></label><label>Type<select name="type" id="type" required></select></label></div><button id="save">Create transaction</button></form></section>
+<section><div class="actions"><h2>Transactions</h2><button id="refresh">Refresh</button></div><form id="filters" class="grid"><label>Category<select id="filterCategory"><option value="">All categories</option></select></label><label>From<input id="start" type="date"></label><label>Through<input id="end" type="date"></label><button>Apply filters</button></form><p id="count"></p><div id="transactions"></div></section></div>
+<footer>Local frontend · No credentials saved · No currency assumed</footer></main></body></html>
+<script src="app.js" defer></script>
+<script src="enhancements.js" defer></script>
+<script src="analytics-config.js" defer></script>
