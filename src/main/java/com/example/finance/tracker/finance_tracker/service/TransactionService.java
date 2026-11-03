@@ -14,6 +14,8 @@ import jakarta.transaction.Transactional;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
@@ -39,6 +41,8 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+
+    private static final Logger log = LoggerFactory.getLogger(TransactionService.class);
 
     public TransactionService(TransactionRepository transactionRepository, UserRepository userRepository, CategoryRepository categoryRepository) {
         this.transactionRepository = transactionRepository;
@@ -68,6 +72,8 @@ public class TransactionService {
         );
 
         TransactionEntity saved = transactionRepository.save(entity);
+
+        log.info("Transaction created: id={}", saved.getId());
 
         return toTransaction(saved);
     }

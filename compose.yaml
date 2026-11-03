@@ -21,14 +21,28 @@ services:
       SPRING_FLYWAY_BASELINE_ON_MIGRATE: "false"
       SPRING_DATASOURCE_USERNAME: raphi
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_PROFILES_ACTIVE: prod
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/actuator/health > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
   redis:
     image: redis:7-alpine
     container_name: finance-redis
     ports:
       - "127.0.0.1:6379:6379"
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 volumes:
   postgres_data:

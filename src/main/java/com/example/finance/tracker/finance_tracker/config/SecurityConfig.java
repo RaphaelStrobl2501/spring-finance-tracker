@@ -1,9 +1,11 @@
 package com.example.finance.tracker.finance_tracker.config;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,7 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@Component
+@Configuration
 public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -23,27 +25,22 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                        .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form.disable())
                 .httpBasic(Customizer.withDefaults())
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(
+                                SessionCreationPolicy.STATELESS
+                        )
+                )
                 .build();
-
-
-        // return http.authorizeHttpRequests(auth -> auth
-         //       .requestMatchers(HttpMethod.GET, "/status").permitAll()
-         //       .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-        //        .anyRequest().authenticated())
-        //        .formLogin(Customizer.withDefaults())
-        //        .logout(Customizer.withDefaults())
-        //        .build();
-
-
-        // http.formLogin(form -> form.defaultSuccessUrl("/whoami", true));
-
-        // http.csrf(csrf -> csrf.disable());
-
-        // return http.build();
     }
 
     @Bean
